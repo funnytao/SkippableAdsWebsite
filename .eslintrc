@@ -1,0 +1,22 @@
+{
+    "env": {
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "airbnb-base",
+        "eslint-config-prettier",
+        "prettier"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "rules": {
+        "no-console": "error",
+        "indent": ["error", 2]
+    }
+}
