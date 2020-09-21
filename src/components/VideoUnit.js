@@ -5,7 +5,7 @@ import VideoPlayer from './VideoPlayer';
 import AdsPlayer from './AdsPlayer';
 import VideoContext from './VideoContext';
 
-const token = "keylUb5OfeoOt36PF";
+const token = "someToken";
 
 /**
  * VideoUnit component
