@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import VideoUnit from '../components/VideoUnit';
 
 import MAIN_VIDEO from '../static/main_video.mp4';
-import ADS_VIDEO from '../static/ads_1.mp4';
+import ADS_VIDEO from '../static/taotest.mp4';
 
 import classes from './VideoPageLayout.module.scss';
 
@@ -15,8 +15,9 @@ console.log(classes)
 const VideoPageLayout = () => {
     return (
         <div className={classes.videoPageWrapper}>
-            <VideoUnit />
-            <VideoUnit />
+            <VideoUnit videoSource={MAIN_VIDEO} adsSource={ADS_VIDEO} adsTime={5} skippable />
+            <VideoUnit videoSource={MAIN_VIDEO} adsSource={ADS_VIDEO} adsTime={0} skippable />
+            <VideoUnit videoSource={MAIN_VIDEO} adsSource={ADS_VIDEO} adsTime={0} />
         </div>
     );
 }

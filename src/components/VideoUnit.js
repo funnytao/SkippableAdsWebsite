@@ -1,30 +1,77 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import VideoPlayer from './VideoPlayer';
+import AdsPlayer from './AdsPlayer';
 import VideoContext from './VideoContext';
 
-import MAIN_VIDEO from '../static/main_video.mp4';
-import ADS_VIDEO from '../static/ads_1.mp4';
+const token = "keylUb5OfeoOt36PF";
 
 /**
  * VideoUnit component
  * @param {object} props video unit props
  * @returns {component} VideoUnit component
  */
-const VideoUnit = ({ source, adsSources, adsTimes }) => {
+const VideoUnit = ({ videoSource, adsSource, adsTime, skippable=false }) => {
     const [playingAds, setPlayingAds] = useState(false);
+    const [adsWatched, setAdsWatched] = useState(false);
+    const [playingVideo, setPlayingVideo] = useState(false);
+
+    const sendUserData = ({watched, skipped}) => {
+        const config = {
+            headers: { Authorization: `Bearer ${token}` }
+        };
+        const data = {
+            "records": [
+                {
+                    "fields": {
+                        "Name": "taotest",
+                        "Date": new Date(Date.now()).toISOString(),
+                        "Watched": watched,
+                        "Skipped": skipped,
+                        "Skippable": skippable,
+                        "StartAt": adsTime
+                    }
+                }
+            ]
+        }
+        axios.post(
+            'https://api.airtable.com/v0/appLLIY3Tt2ZQqHt8/Table%201?maxRecords=3&view=Grid%20view',
+            data,
+            config
+        )
+        .then(res => console.log(res, 'nice'))
+        .catch(err => console.log(err));
+    }
 
     return (
-        <VideoContext.Provider value={{ playingAds, setPlayingAds }}>
+        // The provider wraps the VideoPlayers so that they can share values
+        <VideoContext.Provider value={{ 
+            setAdsWatched, setPlayingAds, setPlayingVideo, adsWatched, playingAds, playingVideo, sendUserData
+        }}>
             <div style={{display: playingAds ? 'none' : 'block'}}>
-                <VideoPlayer source={MAIN_VIDEO} playing={!playingAds} />
+                <VideoPlayer
+                    source={videoSource}
+                    type="video"
+                    adsTime={adsTime}
+                />
             </div>
-            <div style={{display: !playingAds ? 'none' : 'block'}}>
-                <VideoPlayer source={ADS_VIDEO} controls={false} playing={playingAds} loop />
-            </div>
-            <button onClick={() => setPlayingAds(prev => !prev)}>Switch</button>
+            {playingAds && <div >
+                <AdsPlayer
+                    source={adsSource}
+                    playing
+                    skippable={skippable}
+                />
+            </div>}
         </VideoContext.Provider>
     );
 }
+
+VideoUnit.propTypes = {
+    videoSource: PropTypes.string,
+    adsSource: PropTypes.string,
+    adsTime: PropTypes.number,
+    skippable: PropTypes.bool
+};
 
 export default VideoUnit;

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, {useRef, useEffect, useState, useContext} from 'react';
+import React, {useRef, useCallback, useContext} from 'react';
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player'
 import VideoContext from './VideoContext';
@@ -9,53 +9,41 @@ import VideoContext from './VideoContext';
  * @param {object} props video player props
  * @returns {component} VideoPlayer
  */
-const VideoPlayer = ({ source, controls=true, playing=false, loop=false }) => {
+const VideoPlayer = ({ source, adsTime }) => {
   let player = useRef();
-  const videoContext = useContext(VideoContext);
+  // The context is used to share values between parents and children
+  const { setPlayingAds, adsWatched, playingVideo, setPlayingVideo } = useContext(VideoContext);
 
-  const [userData, setUserData] = useState({
-    watched: 0,
-    seeked: 0
-  });
-
-  const [lastPlayed, setLastPlayed] = useState(0);
-
-  useEffect(() => {
-    if (player) {
-      console.log(player.current.getCurrentTime());
+  const onProgress = useCallback(({ playedSeconds }) => {
+    console.log(playedSeconds)
+    if (adsTime > 0 && !adsWatched && playedSeconds >= adsTime) {
+        console.log('playingAds');
+        setPlayingAds(true);
+        setPlayingVideo(false);
     }
-  }, [player]);
+  }, [adsWatched]);
 
-  useEffect(() => {
-    console.log(videoContext)
-  }, [videoContext]);
-
-  /**
-   * Function to update wathced time
-   */
-  const setWatchedTime = () => setUserData(prev => ({
-    ...prev,
-    watched: prev.watched + Date.now() - lastPlayed
-  }));
-
-  return <ReactPlayer 
-    ref={el => {player.current = el}}
-    url={source}
-    controls={controls}
-    playing={playing}
-    loop={loop}
-    onPlay={() => setLastPlayed(Date.now())}
-    onPause={setWatchedTime}
-    onSeek={() => setUserData(prev => ({...prev, seeked: prev.seeked + 1}))}
-    onEnded={() => console.log(userData)}
-  />
+  return <>
+    <ReactPlayer 
+      ref={el => {player.current = el}}
+      url={source}
+      playing={playingVideo}
+      onPlay={() => {
+        if (adsTime === 0 && !adsWatched) {
+          setPlayingAds(true);
+          setPlayingVideo(false);
+        }
+      }}
+      onProgress={onProgress}
+    />
+    <button onClick={() => setPlayingVideo(prev => !prev)}>{playingVideo ? 'Pause' : 'Play'}</button>
+  </>
 }
 
 VideoPlayer.propTypes = {
   source: PropTypes.string,
-  controls: PropTypes.bool,
   playing: PropTypes.bool,
-  loop: PropTypes.bool
+  adsTime: PropTypes.number,
 };
 
 export default VideoPlayer;
