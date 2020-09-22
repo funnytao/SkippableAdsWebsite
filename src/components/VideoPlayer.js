@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, {useRef, useCallback, useContext} from 'react';
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player'
@@ -15,9 +14,7 @@ const VideoPlayer = ({ source, adsTime }) => {
   const { setPlayingAds, adsWatched, playingVideo, setPlayingVideo } = useContext(VideoContext);
 
   const onProgress = useCallback(({ playedSeconds }) => {
-    console.log(playedSeconds)
     if (adsTime > 0 && !adsWatched && playedSeconds >= adsTime) {
-        console.log('playingAds');
         setPlayingAds(true);
         setPlayingVideo(false);
     }

@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import React, {useRef, useEffect, useState, useContext} from 'react';
+import React, {useRef, useContext} from 'react';
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player'
 import VideoContext from './VideoContext';
@@ -12,25 +11,23 @@ import VideoContext from './VideoContext';
 const AdsPlayer = ({ source, playing=false, skippable=false }) => {
   let player = useRef();
   // The context is used to share values between parents and children
-  const { setAdsWatched, setPlayingAds, adsWatched, setPlayingVideo, sendUserData } = useContext(VideoContext);
-  const [startAt, setStartAt] = useState(0);
+  const { setAdsWatched, setPlayingAds, setPlayingVideo, sendUserData } = useContext(VideoContext);
 
   const resumeVideo = skipped => {
+    console.log(`Ads played for - ${player.current.getCurrentTime()}ms`);
+    sendUserData({
+        watched: player.current.getCurrentTime(),
+        skipped
+    });
     setPlayingAds(false);
     setAdsWatched(true);
     setPlayingVideo(true);
-    console.log(`Ads played for - ${Date.now() - startAt}ms`);
-    sendUserData({
-        watched: Date.now() - startAt,
-        skipped
-    })
   }
 
   return <>
     <ReactPlayer 
       ref={el => {player.current = el}}
       url={source}
-      onPlay={() => setStartAt(Date.now())}
       playing={playing}
       onEnded={() => resumeVideo(false)}
     />
