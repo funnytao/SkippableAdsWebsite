@@ -2,8 +2,7 @@ import React from 'react';
 import queryString from 'query-string';
 import VideoUnit from '../components/VideoUnit';
 
-import MAIN_VIDEO from '../static/main_video.mp4';
-import ADS_VIDEO from '../static/taotest.mp4';
+import { ADS_VIDEOS, MAIN_VIDEOS } from './VideoConstant';
 
 import classes from './VideoPageLayout.module.scss';
 
@@ -12,11 +11,11 @@ import classes from './VideoPageLayout.module.scss';
  * @returns {component} main page layout
  */
 const VideoPageLayout = () => {
-    const { adTime = 0, skippable } = queryString.parse(window.location.search);
+    const { adTime = 0, skippable, adId = 0, videoId = 0 } = queryString.parse(window.location.search);
 
     return (
         <div className={classes.videoPageWrapper}>
-            <VideoUnit videoSource={MAIN_VIDEO} adsSource={ADS_VIDEO} adsTime={Number(adTime)} skippable={Boolean(skippable)} />
+            <VideoUnit videoSource={MAIN_VIDEOS[videoId]} adsSource={ADS_VIDEOS[adId]} adsTime={Number(adTime)} skippable={Boolean(skippable)} />
         </div>
     );
 }

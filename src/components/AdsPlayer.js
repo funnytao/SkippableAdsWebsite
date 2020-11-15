@@ -26,11 +26,10 @@ const AdsPlayer = ({ source, playing=false, skippable=false }) => {
   }
 
   return <>
-    {showSkipButton && <button onClick={() => resumeVideo(true)} style={{float:'right'}}>
+    {showSkipButton && <button onClick={() => resumeVideo(true)} style={{position: 'absolute', right: 0, bottom: 0}}>
         Skip
     </button>}
     <ReactPlayer 
-    style={{marginTop: '21px'}}
       ref={el => {player.current = el}}
       url={source}
       playing={playing}
