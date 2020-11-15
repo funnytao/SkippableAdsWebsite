@@ -49,7 +49,7 @@ const VideoUnit = ({ videoSource, adsSource, adsTime, skippable=false }) => {
         <VideoContext.Provider value={{ 
             setAdsWatched, setPlayingAds, setPlayingVideo, adsWatched, playingAds, playingVideo, sendUserData
         }}>
-            <div style={{display: playingAds ? 'none' : 'block'}}>
+            <div style={{display: playingAds ? 'none' : 'block', marginTop: '21px'}}>
                 <VideoPlayer
                     source={videoSource}
                     type="video"

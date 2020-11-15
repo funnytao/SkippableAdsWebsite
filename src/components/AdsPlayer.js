@@ -1,4 +1,4 @@
-import React, {useRef, useContext} from 'react';
+import React, {useRef, useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player'
 import VideoContext from './VideoContext';
@@ -12,6 +12,7 @@ const AdsPlayer = ({ source, playing=false, skippable=false }) => {
   let player = useRef();
   // The context is used to share values between parents and children
   const { setAdsWatched, setPlayingAds, setPlayingVideo, sendUserData } = useContext(VideoContext);
+  const [showSkipButton, setShowSkipButton] = useState(false);
 
   const resumeVideo = skipped => {
     console.log(`Ads played for - ${player.current.getCurrentTime()}ms`);
@@ -25,15 +26,23 @@ const AdsPlayer = ({ source, playing=false, skippable=false }) => {
   }
 
   return <>
+    {showSkipButton && <button onClick={() => resumeVideo(true)} style={{float:'right'}}>
+        Skip
+    </button>}
     <ReactPlayer 
+    style={{marginTop: '21px'}}
       ref={el => {player.current = el}}
       url={source}
       playing={playing}
       onEnded={() => resumeVideo(false)}
+      onPlay={() => {
+        setTimeout(() => {
+          if (skippable) {
+            setShowSkipButton(true)
+          }
+        }, 5000);
+      }}
     />
-    {skippable && <button onClick={() => resumeVideo(true)}>
-        Skip
-    </button>}
   </>
 }
 
